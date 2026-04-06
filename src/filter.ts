@@ -11,7 +11,7 @@ import {
   OFFENSIVE_EMOJI_SEQUENCES,
   CONTEXT_SENSITIVE_EMOJIS,
 } from './wordlists';
-import type { FilterResult, ToxiBROptions } from './types';
+import type { FilterResult, CensorResult, ToxiBROptions } from './types';
 
 // ─── Homoglyph map (Cyrillic → Latin) ────────────────────────────────────────
 
@@ -289,6 +289,86 @@ export function createFilter(options: ToxiBROptions = {}) {
     return { allowed: true };
   };
 }
+
+// ─── Censor function ────────────────────────────────────────────────────────
+
+export function createCensor(options: ToxiBROptions = {}) {
+  const filter = createFilter(options);
+  const char = options.censorChar ?? '*';
+
+  return function censorContent(text: string): CensorResult {
+    // First check the full message for non-word-level blocks
+    const fullResult = filter(text);
+
+    // If blocked by link, phone, or digits_only — censor entire message
+    if (!fullResult.allowed && ['link', 'phone', 'digits_only'].includes(fullResult.reason)) {
+      return {
+        censored: char.repeat(text.length),
+        hasToxicContent: true,
+        matches: [{ word: text, reason: fullResult.reason, matched: fullResult.matched }],
+      };
+    }
+
+    const words = text.split(/(\s+)/); // keep whitespace tokens
+    const matches: CensorResult['matches'] = [];
+    const censored: string[] = [];
+
+    // Scan multi-word phrases first (n-grams: 2, 3, 4)
+    const phraseBlocked = new Set<number>(); // indices of tokens that are part of a blocked phrase
+
+    const nonSpaceIndices: number[] = [];
+    words.forEach((w, i) => { if (w.trim()) nonSpaceIndices.push(i); });
+
+    for (let n = 2; n <= 4; n++) {
+      for (let si = 0; si <= nonSpaceIndices.length - n; si++) {
+        const indices = nonSpaceIndices.slice(si, si + n);
+        if (indices.some(idx => phraseBlocked.has(idx))) continue;
+        const phrase = indices.map(idx => words[idx]).join(' ');
+        const res = filter(phrase);
+        if (!res.allowed && res.matched && res.matched.split(/\s+/).length >= 2) {
+          for (const idx of indices) {
+            phraseBlocked.add(idx);
+          }
+          matches.push({ word: phrase, reason: res.reason, matched: res.matched });
+        }
+      }
+    }
+
+    // Now process each token
+    for (let i = 0; i < words.length; i++) {
+      const token = words[i];
+
+      // Whitespace — keep as-is
+      if (!token.trim()) {
+        censored.push(token);
+        continue;
+      }
+
+      // Part of a blocked phrase — censor
+      if (phraseBlocked.has(i)) {
+        censored.push(char.repeat(token.length));
+        continue;
+      }
+
+      // Single word scan (ignore digits_only and phone for individual words)
+      const res = filter(token);
+      if (!res.allowed && !['digits_only', 'phone'].includes(res.reason)) {
+        censored.push(char.repeat(token.length));
+        matches.push({ word: token, reason: res.reason, matched: res.matched });
+      } else {
+        censored.push(token);
+      }
+    }
+
+    return {
+      censored: censored.join(''),
+      hasToxicContent: matches.length > 0,
+      matches,
+    };
+  };
+}
+
+export const censorContent = createCensor();
 
 // ─── Default filter (zero config) ────────────────────────────────────────────
 

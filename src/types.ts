@@ -4,6 +4,15 @@ export type FilterResult =
   | { allowed: true }
   | { allowed: false; reason: FilterReason; matched: string };
 
+export interface CensorResult {
+  /** The censored text with blocked words replaced */
+  censored: string;
+  /** Whether any word was censored */
+  hasToxicContent: boolean;
+  /** List of words that were censored */
+  matches: Array<{ word: string; reason: FilterReason; matched: string }>;
+}
+
 export interface ToxiBROptions {
   /** Additional words to hard-block (merged with built-in list). */
   extraBlockedWords?: string[];
@@ -17,4 +26,6 @@ export interface ToxiBROptions {
   blockDigitsOnly?: boolean;
   /** Block offensive emojis and emoji sequences. Default: true */
   blockEmojis?: boolean;
+  /** Character used for censoring. Default: '*' */
+  censorChar?: string;
 }

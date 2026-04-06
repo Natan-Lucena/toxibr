@@ -7,6 +7,7 @@ import Scanner from './components/Scanner'
 import Examples from './components/Examples'
 import Stats from './components/Stats'
 import Glossary from './components/Glossary'
+import SubmitWord from './components/SubmitWord'
 import Footer from './components/Footer'
 import Toast from './components/Toast'
 
@@ -63,6 +64,7 @@ function App() {
         contextSensitive={CONTEXT_SENSITIVE.length}
       />
       <Glossary />
+      <SubmitWord />
       <Footer />
       <Toast visible={toastVisible} />
     </>
