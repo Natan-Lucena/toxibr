@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import './Stats.css'
 
 interface StatsProps {
@@ -6,6 +7,19 @@ interface StatsProps {
 }
 
 export default function Stats({ hardBlocked, contextSensitive }: StatsProps) {
+  const [downloads, setDownloads] = useState<string>('—')
+
+  useEffect(() => {
+    fetch('https://api.npmjs.org/downloads/point/last-month/toxibr')
+      .then(res => res.json())
+      .then(data => {
+        if (data.downloads !== undefined) {
+          setDownloads(formatNumber(data.downloads))
+        }
+      })
+      .catch(() => setDownloads('—'))
+  }, [])
+
   return (
     <section className="stats-section">
       <div className="stats-grid">
@@ -22,10 +36,16 @@ export default function Stats({ hardBlocked, contextSensitive }: StatsProps) {
           <div className="stat-label">Por mensagem</div>
         </div>
         <div className="stat-card">
-          <div className="stat-value pink">100%</div>
-          <div className="stat-label">Offline / Client-side</div>
+          <div className="stat-value pink">{downloads}</div>
+          <div className="stat-label">Downloads / mes (npm)</div>
         </div>
       </div>
     </section>
   )
+}
+
+function formatNumber(n: number): string {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + 'M'
+  if (n >= 1_000) return (n / 1_000).toFixed(1) + 'k'
+  return n.toString()
 }
