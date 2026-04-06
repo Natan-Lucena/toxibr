@@ -622,8 +622,8 @@ describe('offensive emoji detection', () => {
       expect(filterContent('comi um 🍑 hoje').allowed).toBe(true);
     });
 
-    it('allows 💦 alone (water/sweat)', () => {
-      expect(filterContent('que calor 💦').allowed).toBe(true);
+    it('blocks 💦 (offensive emoji)', () => {
+      expect(filterContent('que calor 💦').allowed).toBe(false);
     });
 
     it('allows common friendly emojis', () => {

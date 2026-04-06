@@ -115,6 +115,9 @@ const FUZZY_ALLOWLIST = new Set([
   'punho', 'punhal', 'punhado',
   'tocada', 'tocado',
   'primeira', 'primeiro', 'primeiras', 'primeiros',
+  'merda', 'bosta',
+  'plsos',  // typo de pulsos
+  'chorando', 'chorado',  // fuzzy matches chupando
   'mamae', 'mamada',  // mamae gets fuzzy-matched to mamada incorrectly
 ]);
 
@@ -298,7 +301,7 @@ export function createFilter(options: ToxiBROptions = {}) {
         let closestSelfExpr = Infinity;
 
         // Find closest directed pattern
-        for (let radius = 1; radius <= 8; radius++) {
+        for (let radius = 1; radius <= 5; radius++) {
           const ws = Math.max(0, pos - radius);
           const we = Math.min(normalizedWords.length, pos + radius + 1);
           const w = normalizedWords.slice(ws, we).join(' ');

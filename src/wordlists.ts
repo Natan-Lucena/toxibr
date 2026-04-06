@@ -92,7 +92,8 @@ export const HARD_BLOCKED: string[] = [
   'mamad', 'gzd', 'gzada', 'sfada',
   'nfsw', '+18',
   'phub', 'pornh',
-  'bronha', 'brnha', 'lisinha',
+  'bronha', 'brnha', 'bronheiro', 'lisinha',
+  'tirador de leite',
   'xxt', 'crn', 'fdd', 'rabt', 'pnt', 'gls', 'chp', 'cnh',
   'raba', 'pz', 'dlc',
   'brasileirinhas',
@@ -112,6 +113,10 @@ export const HARD_BLOCKED: string[] = [
   'bate quantas', 'bate quantas vezes',
   'tocar uma', 'toca uma', 'tocou uma', 'tocando uma',
   'pau pra cima', 'pau duro', 'pau duraco',
+  'comer um cu', 'cu apertadinho', 'cu apertado',
+  'arrombar ela', 'arrombei toda', 'arrombar toda',
+  'pegar de 4', 'mulher de 4', 'colocar de 4',
+  'pegar de quatro', 'mulher de quatro', 'colocar de quatro',
   'vou te mandar', 'te mandar uns videos',
   'pelada', 'peladinha', 'peladona',
   'nua', 'nuazinha',
@@ -155,6 +160,7 @@ export const HARD_BLOCKED: string[] = [
   'nude', 'nudes',
   'chupar pau', 'chupar pica',
   'gozar', 'gozada', 'gozadas', 'gozei', 'gozou', 'gozaram',
+  'jorrar', 'jorrada', 'jorrou', 'jorro', 'jorradas',
   'foder', 'fudendo', 'fudido',
   'transar', 'transando', 'transa',
   'piroca', 'pirocao', 'pirocas', 'pirocudo',
@@ -180,8 +186,6 @@ export const HARD_BLOCKED: string[] = [
   'sirica', 'siririca',
   'bilau',
   'porra',
-  'merda', 'merdao',
-  'bosta',
   'peitos', 'peituda', 'peitudas',
   'tesuda', 'tesudas', 'tesudo', 'tezao', 'tezuda', 'tezudo',
   'tarada',
@@ -196,16 +200,37 @@ export const HARD_BLOCKED: string[] = [
   'se mata', 'se matar', 'vai se matar',
   'suicida-se',
   'tira sua vida', 'tirava minha vida', 'tira a vida',
+  'tirar sua propria vida', 'tirar a propria vida',
+  'tiro na propria cabeca', 'tiro na cabeca',
+  'pensou em dar um tiro', 'pensou em tirar',
+  'acaba com tua vida', 'acaba com sua vida', 'acabar com tua vida',
+  'acaba logo com tua vida', 'acaba logo com sua vida',
+  'desiste da tua vida', 'desiste da sua vida', 'desista da vida',
+  'da um fim nisso', 'da um fim na sua vida',
+  'da um tiro', 'da um tiro na cabeca', 'da um tiro na tua cabeca',
+  'corta os pulsos', 'cortar os pulsos', 'corta os plsos',
   'deveria se matar', 'devia se matar',
   'ninguem ia sentir falta', 'ninguem sentiria falta',
   'faz um favor e some', 'faz o mundo um favor',
+  'nasceu errado', 'voce nasceu errado',
+  'desperdicio de esperma',
 
   // ── Assedio / bullying / humilhacao ──
-  'vergonha pra familia', 'vergonha pra tua familia',
+  'vergonha pra familia', 'vergonha pra tua familia', 'vergonha pra sua familia',
   'vergonha da familia', 'vergonha pro pai', 'vergonha pra mae',
+  'vergonha para sua familia',
+  'vergonha de voce', 'ter vergonha de voce',
   'mae chora', 'pai chora',
-  'tenho pena de voce', 'tenho do de voce',
+  'mae deve sentir vergonha', 'mae deve ter vergonha',
+  'pai deve sentir vergonha',
+  'mae sabe que voce', 'mae sabe que tu',
+  'tenho pena de voce', 'tenho pena de tu', 'tenho do de voce',
   'voce e uma vergonha', 'tu e uma vergonha',
+  'que vergonha voce', 'que vergonha tu',
+  'dar o rabo', 'dando o rabo',
+  'pegando aids',
+  'sente vergonha de tu', 'sente vergonha de voce',
+  'chorar no banho',
 
   // ── Racismo ──
   'macaco', 'macaca',
@@ -274,6 +299,8 @@ export const CONTEXT_SENSITIVE: string[] = [
   'pica',        // "pica-pau", "que pica" (que legal, regional)
   'caralho',     // "caralho!" como exclamacao de surpresa
   'foda',        // "caralho, hoje ta foda" como exclamacao
+  'merda', 'merdao', // "que merda", "dia de merda"
+  'bosta',           // "isso e uma bosta", "que bosta"
   'caralha', 'caralhudo',  // variantes de caralho
   // Movidos de abbreviation warnings (contexto inocente comum)
   'gostosa', 'gostoso',  // "comida gostosa", "dia gostoso"
@@ -286,6 +313,7 @@ export const CONTEXT_SENSITIVE: string[] = [
 export const OFFENSIVE_EMOJIS: string[] = [
   '🖕',     // dedo do meio
   '🖕🏻', '🖕🏼', '🖕🏽', '🖕🏾', '🖕🏿', // variantes de tom de pele
+  '💦',     // ejaculacao
 ];
 
 /** Sequências de emojis ofensivas (combinações inequívocas). */
@@ -328,9 +356,11 @@ export const DIRECTED_PATTERNS: RegExp[] = [
   /\bvoc[eê]s?\b/i,
   /\btu\b/i,
   /\btua\b/i,
+  /\bteu\b/i,
   /\bseu\b/i,
   /\bsua\b/i,
-  /\b[eé]\s+um[a]?\b/i,
+  /\bvoc[eê]s?\s+[eé]\s+um[a]?\b/i,   // "voce e um/uma" (requer pronome antes)
+  /\btu\s+[eé]\s+um[a]?\b/i,          // "tu e um/uma"
   /\bvai\s+se\b/i,
   /\bcala\s+a?\s*boca\b/i,
   /\bsome\s+daqui\b/i,
@@ -364,4 +394,11 @@ export const SELF_EXPRESSION_PATTERNS: RegExp[] = [
   /\bpinto\s+de\b/i,        // "pinto de ovo"
   /\beu\s+pinto\b/i,        // "eu pinto paredes"
   /\bdp\s+d[oe]\b/i,        // "dp do prédio"
+  // Padroes de exclamacao com palavroes (nao dirigido)
+  /\bque\s+bosta\b/i,         // "que bosta"
+  /\bque\s+merda\b/i,         // "que merda"
+  /\bdia\s+de\s+merda\b/i,    // "dia de merda"
+  /\bisso\s+e\s+uma\s+(merda|bosta)\b/i,  // "isso e uma merda"
+  /\bta\s+foda\b/i,         // "ta foda"
+  /\be\s+foda\b/i,          // "e foda"
 ];
