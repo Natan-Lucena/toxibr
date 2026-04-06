@@ -9,6 +9,7 @@ export const ABBREVIATION_MAP: Record<string, string> = {
   pqp: 'puta que pariu',
   krl: 'caralho',
   gzr: 'gozar',
+  gzar: 'gozar',
   bct: 'buceta',
   pnht: 'punheta',
   vsf: 'vai se fuder',
@@ -30,7 +31,9 @@ export const ABBREVIATION_MAP: Record<string, string> = {
   gts: 'gostosa',
   gtso: 'gostoso',
   xvd: 'xvideos',
+  xvi: 'xvideos',
   prnhb: 'pornhub',
+  urac: 'urach',
 };
 
 /** Palavras SEMPRE bloqueadas, independente do contexto. */
@@ -54,9 +57,9 @@ export const HARD_BLOCKED: string[] = [
   'vacilao',
 
   // ── Abreviacoes BR comuns ──
-  'ppk', 'pqp', 'krl', 'gzr', 'bct', 'pnht',
-  'vsf', 'vtnc', 'tnc', 'pnc', 'fdse',
-  'crl', 'crh', 'btl', 'bqt', 'srrc',
+  'ppk', 'pqp', 'gzr', 'bct', 'pnht',
+  'vsf', 'vtnc', 'tnc', 'pnc',
+  'btl', 'bqt', 'srrc',
   'xvd', 'prnhb',
   'phnta', 'buct', 'pnheta', 'pheta', 'bqut',
   'mamad', 'gzd', 'gzada', 'sfada',
@@ -66,16 +69,20 @@ export const HARD_BLOCKED: string[] = [
   'brasileirinhas',
 
   // ── Conteudo sexual explicito ──
-  'punheteiro', 'punheteira', 'punheta', 'punhetao', 'punhetinha', 'punha',
-  'batendo uma', 'bora bater uma', 'gozando',
+  'punheteiro', 'punheteira', 'punheta', 'punhetao', 'punhetinha',
+  'batendo uma', 'bora bater uma', 'bater uma', 'gozando',
   'anal', 'mamada', 'leitada',
   'culinho',
-  'jogar um leite', 'esvaziar o saco',
+  'jogar um leite', 'esvaziar o saco', 'tirar um leite', 'tirar leite',
   'camera prive', 'deposito de porra',
   'piranha', 'piranhas',
   'interesseira',
   'onlyf',
-  'se aliviou', 'ja se aliviou', 'bate uma',
+  'curte um of', 'tem of', 'faz of', 'tem onlyfans',
+  'se aliviou', 'ja se aliviou', 'bate uma', 'bateu uma',
+  'bate quantas', 'bate quantas vezes',
+  'tocar uma', 'toca uma', 'tocou uma', 'tocando uma',
+  'pau pra cima', 'pau duro', 'pau duraco',
   'vou te mandar', 'te mandar uns videos',
   'pelada', 'peladinha', 'peladona',
   'nua', 'nuazinha',
@@ -110,10 +117,11 @@ export const HARD_BLOCKED: string[] = [
   'pedofilo', 'pedofilia',
   'zoofilia', 'necrofilia',
   'pornografia infantil',
+  'porno', 'pornozao', 'pornografia',
   'nude', 'nudes',
   'chupar pau', 'chupar pica',
   'gozar', 'gozada', 'gozadas',
-  'foder', 'foda', 'fudendo', 'fudido',
+  'foder', 'fudendo', 'fudido',
   'transar', 'transando', 'transa',
   'piroca', 'pirocao', 'pirocas', 'pirocudo',
   'buceta', 'bucetao', 'bucetas', 'bucetasso', 'bucetinha', 'bucetinhas', 'bucetonas',
@@ -137,7 +145,6 @@ export const HARD_BLOCKED: string[] = [
   'trepada', 'trepadas',
   'sirica', 'siririca',
   'bilau',
-  'caralha', 'caralhudo',
   'porra',
   'merda', 'merdao',
   'bosta',
@@ -150,10 +157,21 @@ export const HARD_BLOCKED: string[] = [
   'piranhuda', 'piriguetes',
   'dadeira',
 
-  // ── Violencia ──
+  // ── Violencia / incitacao suicidio ──
   'vou te matar', 'vou matar voce',
   'se mata', 'se matar', 'vai se matar',
   'suicida-se',
+  'tira sua vida', 'tirava minha vida', 'tira a vida',
+  'deveria se matar', 'devia se matar',
+  'ninguem ia sentir falta', 'ninguem sentiria falta',
+  'faz um favor e some', 'faz o mundo um favor',
+
+  // ── Assedio / bullying / humilhacao ──
+  'vergonha pra familia', 'vergonha pra tua familia',
+  'vergonha da familia', 'vergonha pro pai', 'vergonha pra mae',
+  'mae chora', 'pai chora',
+  'tenho pena de voce', 'tenho do de voce',
+  'voce e uma vergonha', 'tu e uma vergonha',
 
   // ── Racismo ──
   'macaco', 'macaca',
@@ -221,6 +239,8 @@ export const CONTEXT_SENSITIVE: string[] = [
   'cu',          // "recuar", contexto comum
   'pica',        // "pica-pau", "que pica" (que legal, regional)
   'caralho',     // "caralho!" como exclamacao de surpresa
+  'foda',        // "caralho, hoje ta foda" como exclamacao
+  'caralha', 'caralhudo',  // variantes de caralho
   // Movidos de abbreviation warnings (contexto inocente comum)
   'gostosa', 'gostoso',  // "comida gostosa", "dia gostoso"
   'delicia',              // "que delicia de bolo"
@@ -235,6 +255,8 @@ export const OFFENSIVE_EMOJIS: string[] = [
 /** Sequências de emojis ofensivas (combinações inequívocas). */
 export const OFFENSIVE_EMOJI_SEQUENCES: string[] = [
   // ── Conotação sexual explícita ──
+  '🍌',
+  '🍆🍌',
   '🍆💦',    // pênis + ejaculação
   '🍆🍑',    // pênis + bunda
   '🍑💦',    // bunda + ejaculação
@@ -269,6 +291,7 @@ export const CONTEXT_SENSITIVE_EMOJIS: string[] = [
 export const DIRECTED_PATTERNS: RegExp[] = [
   /\bvoc[eê]s?\b/i,
   /\btu\b/i,
+  /\btua\b/i,
   /\bseu\b/i,
   /\bsua\b/i,
   /\b[eé]\s+um[a]?\b/i,

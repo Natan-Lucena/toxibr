@@ -61,9 +61,15 @@ export function normalize(input: string): string {
   // 9. Remove spaces between isolated single chars (p u t a → puta)
   t = t.replace(/\b(\w)\s(\w)\s(\w)/g, (_, a, b, c) => a + b + c);
 
-  // 10. Expand known abbreviations
+  // 10. Expand known abbreviations (strip punctuation from each word before lookup)
   const words = t.split(/\s+/);
-  t = words.map(w => ABBREVIATION_MAP[w] ?? w).join(' ');
+  t = words.map(w => {
+    const clean = w.replace(/[^a-z0-9çã]/g, '');
+    return ABBREVIATION_MAP[clean] ?? w;
+  }).join(' ');
+
+  // 11. Re-clean after abbreviation expansion (expansions may contain dashes/spaces)
+  t = t.replace(/[.\-]/g, ' ').replace(/\s+/g, ' ').trim();
 
   return t;
 }
@@ -101,6 +107,15 @@ function getFuzzyThreshold(wordLength: number): number {
   if (wordLength <= 7) return 1;
   return 2;
 }
+
+// Common innocent words that fuzzy matching incorrectly flags
+const FUZZY_ALLOWLIST = new Set([
+  'parada', 'parado', 'paradas', 'parados',
+  'batedor', 'batedores',
+  'punho', 'punhal', 'punhado',
+  'tocada', 'tocado',
+  'mamae', 'mamada',  // mamae gets fuzzy-matched to mamada incorrectly
+]);
 
 // ─── Escape regex special chars ──────────────────────────────────────────────
 
@@ -144,13 +159,18 @@ export function createFilter(options: ToxiBROptions = {}) {
   // Pre-normalized wordlist for fuzzy matching, bucketed by length (deduplicated)
   const fuzzyByLength = new Map<number, string[]>();
   const seenFuzzy = new Set<string>();
+  // Pre-normalized single words for prefix matching (min 5 chars)
+  const prefixWords: string[] = [];
   for (const w of allBlocked) {
     const n = normalize(w);
-    if (n.includes(' ') || n.length < 5 || seenFuzzy.has(n)) continue;
-    seenFuzzy.add(n);
-    const len = n.length;
-    if (!fuzzyByLength.has(len)) fuzzyByLength.set(len, []);
-    fuzzyByLength.get(len)!.push(n);
+    if (n.includes(' ')) continue;
+    if (n.length >= 5 && !seenFuzzy.has(n)) {
+      seenFuzzy.add(n);
+      const len = n.length;
+      if (!fuzzyByLength.has(len)) fuzzyByLength.set(len, []);
+      fuzzyByLength.get(len)!.push(n);
+    }
+    if (n.length >= 5) prefixWords.push(n);
   }
 
   return function filterContent(text: string): FilterResult {
@@ -167,7 +187,7 @@ export function createFilter(options: ToxiBROptions = {}) {
         return { allowed: false, reason: 'phone', matched: 'telefone' };
       }
       const totalDigits = text.replace(/\D/g, '').length;
-      if (totalDigits >= 9) {
+      if (totalDigits >= 5) {
         return { allowed: false, reason: 'phone', matched: 'telefone' };
       }
     }
@@ -217,7 +237,7 @@ export function createFilter(options: ToxiBROptions = {}) {
       const messageWords = new Set(normalized.split(/\s+/));
       for (const msgWord of messageWords) {
         const threshold = getFuzzyThreshold(msgWord.length);
-        if (threshold === 0) continue;
+        if (threshold === 0 || FUZZY_ALLOWLIST.has(msgWord)) continue;
         // Only check blocked words whose length is within threshold range
         for (let len = msgWord.length - threshold; len <= msgWord.length + threshold; len++) {
           const candidates = fuzzyByLength.get(len);
@@ -232,17 +252,35 @@ export function createFilter(options: ToxiBROptions = {}) {
       }
     }
 
+    // Layer 1c: Prefix match — catches truncated words (e.g. "estup" → "estupro")
+    {
+      const messageWords = normalized.split(/\s+/);
+      for (const msgWord of messageWords) {
+        // Word must be at least 4 chars and cover at least 70% of a blocked word
+        if (msgWord.length < 4) continue;
+        for (const blocked of prefixWords) {
+          if (blocked.length < msgWord.length) continue;
+          if (blocked.startsWith(msgWord) && msgWord.length >= blocked.length * 0.55) {
+            return { allowed: false, reason: 'hard_block', matched: blocked };
+          }
+        }
+      }
+    }
+
     // Layer 2: Context-sensitive words
     for (const { word, regex } of contextSensitiveRegexes) {
       if (!regex.test(normalized)) continue;
 
-      // Self-expression → allow
-      if (SELF_EXPRESSION_PATTERNS.some(p => p.test(normalized))) continue;
+      const hasSelfExpression = SELF_EXPRESSION_PATTERNS.some(p => p.test(normalized));
+      const hasDirected = DIRECTED_PATTERNS.some(p => p.test(normalized));
 
-      // Directed at another person → block
-      if (DIRECTED_PATTERNS.some(p => p.test(normalized))) {
+      // If directed at someone → block (even if self-expression also present)
+      if (hasDirected) {
         return { allowed: false, reason: 'directed_insult', matched: word };
       }
+
+      // Pure self-expression → allow
+      if (hasSelfExpression) continue;
 
       // Ambiguous → allow
     }
