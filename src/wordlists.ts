@@ -153,7 +153,6 @@ export const HARD_BLOCKED: string[] = [
   'novinha', 'novinhas',
 
   // ── Abreviacoes sexuais ──
-  'd4',  // de 4 (posicao sexual)
 
   // ── Atrizes porno BR ──
   'bruna surfistinha', 'andressa urach', 'elisa sanches',

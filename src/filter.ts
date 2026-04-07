@@ -188,9 +188,13 @@ export function createFilter(options: ToxiBROptions = {}) {
     const normalized = normalize(text);
 
     // Layer 0: Censorship bypass detection — words with * or # between letters
-    // Nobody uses these in normal conversation, only to censor profanity
     if (/\w[*#]+\w/.test(text)) {
       return { allowed: false, reason: 'hard_block', matched: 'censorship bypass' };
+    }
+
+    // Layer 0z: Pre-normalization exact matches (terms that break after leetspeak)
+    if (/\bd4\b/i.test(text)) {
+      return { allowed: false, reason: 'hard_block', matched: 'd4' };
     }
 
     // Layer 0a: Block links/URLs

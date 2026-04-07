@@ -14,6 +14,7 @@ export default function Navbar() {
           <span className="nav-brand-sub">Moderacao de Chat</span>
         </a>
         <div className="nav-links">
+          <a href="#como-usar">Como usar</a>
           <a href="https://www.npmjs.com/package/toxibr" target="_blank" rel="noopener">npm</a>
           <a href="https://github.com/Diaum/toxibr/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">Contribuir</a>
           <a

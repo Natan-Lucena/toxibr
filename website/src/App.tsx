@@ -6,6 +6,7 @@ import Terminal from './components/Terminal'
 import Scanner from './components/Scanner'
 import Examples from './components/Examples'
 import Stats from './components/Stats'
+import HowToUse from './components/HowToUse'
 import Glossary from './components/Glossary'
 import SubmitWord from './components/SubmitWord'
 import Footer from './components/Footer'
@@ -63,6 +64,7 @@ function App() {
         hardBlocked={HARD_BLOCKED.length}
         contextSensitive={CONTEXT_SENSITIVE.length}
       />
+      <HowToUse />
       <Glossary />
       <SubmitWord />
       <Footer />

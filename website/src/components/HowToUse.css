@@ -1,0 +1,162 @@
+.howto-section {
+  max-width: 1200px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.howto-inner {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+}
+
+.howto-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.howto-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+/* ── Steps ── */
+.howto-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.howto-step {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.howto-step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent-dim), var(--red-dim));
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.howto-step-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.howto-step-content h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+/* ── Code blocks ── */
+.howto-code-block {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+}
+
+.howto-code-block code {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--green);
+  line-height: 1.7;
+}
+
+.howto-code-block.large code {
+  color: var(--text-secondary);
+}
+
+.howto-code-block pre {
+  margin: 0;
+  white-space: pre;
+}
+
+/* ── Tabs ── */
+.howto-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.25rem;
+  width: fit-content;
+}
+
+.howto-tab {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.4rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.howto-tab:hover {
+  color: var(--text-secondary);
+}
+
+.howto-tab.active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+/* ── Features grid ── */
+.howto-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 600px) {
+  .howto-features { grid-template-columns: 1fr; }
+  .howto-step { flex-direction: column; }
+}
+
+.howto-feature {
+  text-align: center;
+  padding: 1rem;
+}
+
+.howto-feature-icon {
+  font-size: 1.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.howto-feature h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.howto-feature p {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
