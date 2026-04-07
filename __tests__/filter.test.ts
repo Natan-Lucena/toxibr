@@ -5,6 +5,7 @@ import {
   createFilter,
   filterBatch,
   createFilterBatch,
+  stem,
 } from '../src/filter';
 
 // ─── Normalization ───────────────────────────────────────────────────────────
@@ -1403,6 +1404,142 @@ describe('[Issue #42] - 10 Termos Reportados', () => {
     it('allows "copo de leite" (leite em contexto inocente)', () => {
       expect(filterContent('copo de leite').allowed).toBe(true);
     });
+  });
+});
+
+// ─── Stemmer ──────────────────────────────────────────────────────────────────
+
+describe('stem', () => {
+  it('reduces verb infinitives to radical', () => {
+    expect(stem('estuprar')).toBe('estupr');
+    expect(stem('gozar')).toBe('goz');
+    expect(stem('chupar')).toBe('chup');
+    expect(stem('foder')).toBe('fod');
+    expect(stem('transar')).toBe('trans');
+  });
+
+  it('reduces gerund forms', () => {
+    expect(stem('estuprando')).toBe('estupr');
+    expect(stem('gozando')).toBe('goz');
+    expect(stem('chupando')).toBe('chup');
+    expect(stem('fodendo')).toBe('fod');
+  });
+
+  it('reduces past tense (ei/ou/eu)', () => {
+    expect(stem('estuprou')).toBe('estupr');
+    expect(stem('gozei')).toBe('goz');
+    expect(stem('chupou')).toBe('chup');
+    expect(stem('fodeu')).toBe('fod');
+  });
+
+  it('reduces plural past (aram/eram/iram)', () => {
+    expect(stem('estupraram')).toBe('estupr');
+    expect(stem('gozaram')).toBe('goz');
+    expect(stem('foderam')).toBe('fod');
+  });
+
+  it('reduces imperfect (ava/iam)', () => {
+    expect(stem('gozavam')).toBe('goz');
+    expect(stem('fodiam')).toBe('fod');
+  });
+
+  it('reduces conditional (aria/eria/iria)', () => {
+    expect(stem('gozaria')).toBe('goz');
+    expect(stem('foderia')).toBe('fod');
+  });
+
+  it('reduces subjunctive (asse/esse/isse)', () => {
+    expect(stem('gozasse')).toBe('goz');
+    expect(stem('fodesse')).toBe('fod');
+  });
+
+  it('reduces diminutives (inho/inha)', () => {
+    expect(stem('putinha')).toBe('put');
+    expect(stem('cuzinho')).toBe('cuz');
+  });
+
+  it('reduces augmentatives (ao/ona)', () => {
+    expect(stem('putona')).toBe('put');
+  });
+
+  it('reduces agent suffixes (eiro/eira)', () => {
+    expect(stem('punheteiro')).toBe('punhet');
+    expect(stem('punheteira')).toBe('punhet');
+  });
+
+  it('does not stem words that would become too short', () => {
+    expect(stem('cu')).toBe('cu');
+    expect(stem('pau')).toBe('pau');
+  });
+
+  it('returns word unchanged when no suffix matches', () => {
+    expect(stem('nazi')).toBe('nazi');
+    expect(stem('fdp')).toBe('fdp');
+  });
+});
+
+// ─── Stem match (filter integration) ─────────────────────────────────────────
+
+describe('stem_match', () => {
+  it('blocks verb conjugations not in wordlist via stem match', () => {
+    // These conjugations are NOT in HARD_BLOCKED, but the radical matches
+    const conjugations = [
+      'estuprei', // estuprar → estupr
+      'estupraria', // conditional
+      'estuprasse', // subjunctive
+      'estupravam', // imperfect
+    ];
+    for (const word of conjugations) {
+      const result = filterContent(word);
+      expect(result.allowed).toBe(false);
+    }
+  });
+
+  it('blocks conjugations of "chupar"', () => {
+    const forms = ['chupei', 'chuparam', 'chuparia', 'chupasse'];
+    for (const word of forms) {
+      const result = filterContent(word);
+      expect(result.allowed).toBe(false);
+    }
+  });
+
+  it('blocks conjugations of "foder"', () => {
+    const forms = ['fodi', 'foderam', 'foderia', 'fodesse'];
+    for (const word of forms) {
+      const result = filterContent(word);
+      expect(result.allowed).toBe(false);
+    }
+  });
+
+  it('blocks conjugations of "gozar" via stem', () => {
+    const forms = ['gozavam', 'gozaria', 'gozasse', 'gozariam'];
+    for (const word of forms) {
+      const result = filterContent(word);
+      expect(result.allowed).toBe(false);
+    }
+  });
+
+  it('blocks conjugations of "transar"', () => {
+    const forms = ['transei', 'transou', 'transaram', 'transaria'];
+    for (const word of forms) {
+      const result = filterContent(word);
+      expect(result.allowed).toBe(false);
+    }
+  });
+
+  it('does not false-positive on innocent words with short stems', () => {
+    // These should NOT be blocked by stem match
+    expect(filterContent('computador').allowed).toBe(true);
+    expect(filterContent('metodo').allowed).toBe(true);
+    expect(filterContent('comunidade').allowed).toBe(true);
+  });
+
+  it('returns reason stem_match for stem-matched words', () => {
+    const result = filterContent('estupraria');
+    expect(result.allowed).toBe(false);
+    if (!result.allowed) {
+      expect(result.reason).toBe('stem_match');
+    }
   });
 });
 

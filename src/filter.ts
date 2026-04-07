@@ -304,6 +304,117 @@ const FUZZY_ALLOWLIST = new Set([
   'roda', // prefix matches rodada
 ]);
 
+// ─── PT-BR Stemmer (RSLP simplificado) ──────────────────────────────────────
+
+// Suffixes ordered longest-first so greedy match works correctly.
+// Each group: verbal conjugation, then nominal.
+const STEM_SUFFIXES = [
+  // Verbal — gerund
+  'ando',
+  'endo',
+  'indo',
+  // Verbal — past / conditional / subjunctive (longer first)
+  'ariam',
+  'eriam',
+  'iriam',
+  'aram',
+  'eram',
+  'iram',
+  'avam',
+  'iam',
+  'aria',
+  'eria',
+  'iria',
+  'asse',
+  'esse',
+  'isse',
+  'ase',
+  'ese',
+  'ise', // normalized forms (ss → s after char collapse)
+  'aram',
+  'eram',
+  'iram',
+  'aram',
+  // Verbal — simple past / present
+  'ou',
+  'ei',
+  'eu',
+  'ar',
+  'er',
+  'ir',
+  // Nominal — augmentative / diminutive / agent
+  'inho',
+  'inha',
+  'inhos',
+  'inhas',
+  'eiro',
+  'eira',
+  'eiros',
+  'eiras',
+  'udo',
+  'uda',
+  'udos',
+  'udas',
+  'oso',
+  'osa',
+  'osos',
+  'osas',
+  'ado',
+  'ada',
+  'ados',
+  'adas',
+  'ido',
+  'ida',
+  'idos',
+  'idas',
+  'ona',
+  'onas',
+  'ao',
+  'oes',
+];
+
+/** Minimum stem length — stems shorter than this are not produced. */
+const MIN_STEM_LEN = 3;
+
+/**
+ * Lightweight PT-BR stemmer: strips the first matching suffix and returns the
+ * radical. Returns the original word when no suffix matches or the stem would
+ * be shorter than MIN_STEM_LEN.
+ */
+export function stem(word: string): string {
+  for (const suf of STEM_SUFFIXES) {
+    if (word.length > suf.length + MIN_STEM_LEN - 1 && word.endsWith(suf)) {
+      return word.slice(0, -suf.length);
+    }
+  }
+  return word;
+}
+
+/**
+ * Stems that are known false-positives — innocent words whose stem collides
+ * with a blocked word's stem. Checked against the *message word's* stem.
+ */
+const STEM_ALLOWLIST = new Set([
+  // "computador/computar" → stem "comput" — innocent
+  'comput',
+  // "método/meter" collision
+  'met',
+  // "comunidade/comer" collision
+  'com',
+  // "estourar/estouro" — stem "estour"
+  'estour',
+  // "jogou/jogar" — innocent gaming context (already context-sensitive)
+  'jog',
+  // "chorando/chorado" — innocent
+  'chor',
+  // "mamãe" — stem "mam"
+  'mam',
+  // "batedor/bater" — stem "bat"
+  'bat',
+  // "tocada/tocar" — stem "toc"
+  'toc',
+]);
+
 // ─── Escape regex special chars ──────────────────────────────────────────────
 
 function escapeRegex(str: string): string {
@@ -371,6 +482,15 @@ export function createFilter(options: ToxiBROptions = {}): ToxiBRFilter {
 
   const hardBlockedRegexes = buildRegexes(allBlocked);
   const contextSensitiveRegexes = buildRegexes(allContext);
+
+  // Pre-compute blocked stems (single words only, stem length >= MIN_STEM_LEN)
+  const blockedStems = new Set<string>();
+  for (const w of allBlocked) {
+    const n = normalize(w);
+    if (n.includes(' ')) continue;
+    const s = stem(n);
+    if (s.length >= MIN_STEM_LEN) blockedStems.add(s);
+  }
 
   // Pre-normalized wordlist for fuzzy matching, bucketed by length (deduplicated)
   const fuzzyByLength = new Map<number, string[]>();
@@ -545,6 +665,22 @@ export function createFilter(options: ToxiBROptions = {}): ToxiBRFilter {
     for (const { word, regex } of hardBlockedRegexes) {
       if (regex.test(normalized)) {
         return makeResult('hard_block', word);
+      }
+    }
+
+    // Layer 1a: Stem match — catches verb conjugations automatically
+    {
+      const messageWords = normalized.split(/\s+/);
+      for (const msgWord of messageWords) {
+        if (msgWord.length < 4) continue;
+        const wordStem = stem(msgWord);
+        if (
+          wordStem.length >= MIN_STEM_LEN &&
+          !STEM_ALLOWLIST.has(wordStem) &&
+          blockedStems.has(wordStem)
+        ) {
+          return makeResult('stem_match', msgWord);
+        }
       }
     }
 

@@ -1,5 +1,6 @@
 export type FilterReason =
   | 'hard_block'
+  | 'stem_match'
   | 'directed_insult'
   | 'fuzzy_match'
   | 'suspicious_content'
