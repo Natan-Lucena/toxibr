@@ -119,6 +119,8 @@ export const HARD_BLOCKED: string[] = [
   'pau pra cima', 'pau duro', 'pau duraco',
   'comer um cu', 'cu apertadinho', 'cu apertado',
   'arrombar ela', 'arrombei toda', 'arrombar toda',
+  'arrombar esse', 'arrombar teu', 'arrombar seu', 'arrombar o teu', 'arrombar o seu',
+  'vou arrombar',
   'pegar de 4', 'mulher de 4', 'colocar de 4',
   'entro com a pica', 'mete a pica', 'meter a pica',
   'enfia o meninao', 'meter o meninao', 'mete o meninao',
@@ -318,6 +320,7 @@ export const CONTEXT_SENSITIVE: string[] = [
   'pica',        // "pica-pau", "que pica" (que legal, regional)
   'caralho',     // "caralho!" como exclamacao de surpresa
   'foda',        // "caralho, hoje ta foda" como exclamacao
+  'rabo',            // "rabo do cachorro" vs "teu rabo"
   'merda', 'merdao', // "que merda", "dia de merda"
   'bosta',           // "isso e uma bosta", "que bosta"
   'putaria',         // "que putaria e essa" como exclamacao
