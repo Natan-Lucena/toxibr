@@ -131,6 +131,8 @@ export const HARD_BLOCKED: string[] = [
   'fez um 69', 'fazer um 69', 'um 69',
   'bombeia pra cabeca', 'bombeia tudo',
   'metecao', 'gangbang', 'orgia', 'orgias',
+  'calcinha', 'calcinhas', 'so de calcinha', 'puxei a calcinha',
+  'de calcinha', 'sem calcinha', 'tirou a calcinha',
   'melado', 'melzinho', 'tadala',
   'jato na cara', 'jogava o jato', 'jogar o jato',
   'vazou na net', 'vazou nude', 'vazou nudes',
