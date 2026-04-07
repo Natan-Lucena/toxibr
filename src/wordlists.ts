@@ -318,7 +318,7 @@ export const HARD_BLOCKED: string[] = [
   'gestapo', 'ss nazista',
   'skinhead', 'skinheads',
   'fascista', 'fascismo', 'fascistas',
-  'ku klux klan', 'kkk',
+  'ku klux klan',
   // Abreviacoes nazistas
   'nz', 'hh',
   'nazsimo', 'nazismu',

@@ -124,6 +124,7 @@ const FUZZY_ALLOWLIST = new Set([
   'chorando', 'chorado',  // fuzzy matches chupando
   'conteudo', 'cotneudo', // fuzzy matches cornudo
   'estourar', 'estourou', 'estouro', // fuzzy matches estuprar
+  'jogou', 'jogos', 'jogo', // fuzzy matches jorrou
   'mamae', 'mamada',  // mamae gets fuzzy-matched to mamada incorrectly
 ]);
 
