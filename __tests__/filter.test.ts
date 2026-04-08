@@ -1,4 +1,4 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, jest } from '@jest/globals';
 import {
   filterContent,
   normalize,
@@ -139,12 +139,28 @@ describe('bypass prevention', () => {
     expect(filterContent('3stupr0').allowed).toBe(false);
   });
 
-  it('blocks with accents: viàdo', () => {
-    expect(filterContent('viàdo').allowed).toBe(false);
+  it('blocks with unusual accents: viàdo, vîado, pũta, etc.', () => {
+    const words = [
+      'viàdo', 'pùta', 'èstupro',
+      'vîado', 'pûta', 'bûceta',
+      'viãdo', 'pũta',
+      'raça ariana',
+      'vïado', 'vīado', 'pūta',
+    ];
+    words.forEach(word => {
+      expect(filterContent(word).allowed).toBe(false);
+    });
   });
 
   it('blocks with zero-width chars', () => {
     expect(filterContent('vi\u200Bado').allowed).toBe(false);
+    expect(filterContent('v\u200Diado').allowed).toBe(false);
+    expect(filterContent('vi\u200Dado').allowed).toBe(false);
+    expect(filterContent('p\u200Du\u200Dt\u200Da').allowed).toBe(false);
+  });
+
+  it('blocks with Zalgo Text / heavy combining marks', () => {
+    expect(filterContent('v̵i̵a̵d̵o̵').allowed).toBe(false);
   });
 
   it('blocks repeated chars: viiaaado', () => {
