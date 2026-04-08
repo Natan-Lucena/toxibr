@@ -108,7 +108,6 @@ export const HARD_BLOCKED: string[] = [
   'brasileirinhas',
 
   // ── Conteudo sexual explicito ──
-  // Issue #42 — termos não capturados
   'tarado', 'tarada',
   'cuzinho',
   'gozo', 'gozos',

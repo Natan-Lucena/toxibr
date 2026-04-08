@@ -132,7 +132,7 @@ describe('hard-blocked — new BR actresses (v2)', () => {
 });
 
 // ─── Bypass attempts ─────────────────────────────────────────────────────────
-// ─── Validação Issue #42 (Acentos Invertidos e Especiais) ─────────────────
+
 describe('bypass prevention', () => {
   it('blocks leetspeak: 3stupr0', () => {
     expect(filterContent('3stupr0').allowed).toBe(false);
@@ -271,9 +271,7 @@ describe('pinto/dp as context-sensitive (v2.1)', () => {
     expect(filterContent('voce quer dp').allowed).toBe(false);
   });
 });
-// ── Testes para Issue #57 (pipoca / pika ) ────────────────────────────────────
-//pipoca deve ser permitido, pika deve ser bloqueado
-describe('Issue #57 - Falsos positivos com pipoca e pika', () => {
+describe('Falsos positivos com pipoca e pika', () => {
   
   it('deve permitir "pipoca" (falso positivo no fuzzy match)', () => {
     expect(filterContent("Eu amo comer pipoca assistindo filme").allowed).toBe(true);
@@ -896,9 +894,9 @@ describe('filterBatch', () => {
   });
 });
 
-// ─── Issue #37 — Bypass com números não-leet e emojis ────────────────────────
+// ─── Bypass com números não-leet e emojis ────────────────────────────────────
 
-describe('Issue #37 — numeric bypass (digits 2, 6, 8, 9 as separators)', () => {
+describe('numeric bypass (digits 2, 6, 8, 9 as separators)', () => {
   describe('bypass bloqueado', () => {
     it('blocks v2ado (viado com 2)', () => {
       const result = filterContent('v2ado');
@@ -960,7 +958,7 @@ describe('Issue #37 — numeric bypass (digits 2, 6, 8, 9 as separators)', () =>
   });
 });
 
-describe('Issue #37 — emoji bypass (emojis como separadores dentro de palavras)', () => {
+describe('emoji bypass (emojis como separadores dentro de palavras)', () => {
   describe('bypass bloqueado', () => {
     it('blocks v🍑ado (viado com emoji pêssego)', () => {
       const result = filterContent('v🍑ado');
@@ -1017,7 +1015,7 @@ describe('Issue #37 — emoji bypass (emojis como separadores dentro de palavras
   });
 });
 
-describe('Issue #37 — leetspeak legítimo (0, 1, 3, 4, 5, 7) continua funcionando via Layer de tradução', () => {
+describe('leetspeak legítimo (0, 1, 3, 4, 5, 7) continua funcionando via Layer de tradução', () => {
   it('blocks 3stupr0 (estupro com leet 3→e, 0→o)', () => {
     const result = filterContent('3stupr0');
     expect(result.allowed).toBe(false);
@@ -1045,9 +1043,8 @@ describe('Issue #37 — leetspeak legítimo (0, 1, 3, 4, 5, 7) continua funciona
   });
 });
 
-// ─── Issue #42 — 10 Termos Não Capturados ────────────────────────────────────
 
-describe('[Issue #42] - 10 Termos Reportados', () => {
+describe('Validação de termos reportados', () => {
   // ── pornografia ────────────────────────────────────────────────────────────
 
   describe('pornografia — variantes de bypass', () => {
@@ -1215,7 +1212,7 @@ describe('[Issue #42] - 10 Termos Reportados', () => {
 
   // ── abreviações novas (prn, sx, trd) ──────────────────────────────────────
 
-  describe('novas abreviações (Issue #42)', () => {
+  describe('novas abreviações', () => {
     it('blocks "prn" (→ porno via ABBREVIATION_MAP)', () => {
       expect(filterContent('prn').allowed).toBe(false);
     });
@@ -1268,9 +1265,9 @@ describe('[Issue #42] - 10 Termos Reportados', () => {
   });
 });
 
-// ─── Issue #57 — Whitelist e falso positivo pipoca/piroca ────────────────────
+// ─── Whitelist e falso positivo pipoca/piroca ────────────────────
 
-describe('Issue #57 — Whitelist: falsos positivos de fuzzy match', () => {
+describe('Whitelist: falsos positivos de fuzzy match', () => {
   describe('falso positivo corrigido (pipoca ≠ piroca)', () => {
     it('allows "pipoca" (fuzzy-match com piroca era falso positivo)', () => {
       const result = filterContent('pipoca');
