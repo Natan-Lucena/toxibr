@@ -6,6 +6,7 @@
 /** Abreviações comuns BR → palavra completa (para expansão na normalização). */
 // prettier-ignore
 export const ABBREVIATION_MAP: Record<string, string> = {
+  dudu: 'dudu',
   ppk: 'pepeca',
   pqp: 'puta que pariu',
   krl: 'caralho',
