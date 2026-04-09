@@ -323,25 +323,25 @@ const FUZZY_ALLOWLIST = new Set([
   'porto', // → porno  (dist 1)
   // Nomes de jogos populares — issue #64
   // Palavras em títulos de jogos que poderiam colidir com termos bloqueados via fuzzy
-  'mortal',   // Mortal Kombat
-  'kombat',   // Mortal Kombat
-  'hitman',   // Hitman
-  'asasin',   // Assassin's Creed (normalizado: assassin → asasin via colapso ss→s)
-  'devil',    // Devil May Cry
-  'kiler',    // Killer Instinct (normalizado: killer → kiler via colapso ll→l)
+  'mortal', // Mortal Kombat
+  'kombat', // Mortal Kombat
+  'hitman', // Hitman
+  'asasin', // Assassin's Creed (normalizado: assassin → asasin via colapso ss→s)
+  'devil', // Devil May Cry
+  'kiler', // Killer Instinct (normalizado: killer → kiler via colapso ll→l)
   'instinct', // Killer Instinct
   'daylight', // Dead by Daylight
   'fortnite', // Fortnite
   'valorant', // Valorant
   'overwatch', // Overwatch
   'minecraft', // Minecraft
-  'roblox',   // Roblox
-  'ranked',   // termo de gaming (modo classificatório)
-  'gamer',    // termo de gaming
+  'roblox', // Roblox
+  'ranked', // termo de gaming (modo classificatório)
+  'gamer', // termo de gaming
   'headshot', // termo de gaming (FPS)
-  'respawn',  // termo de gaming
-  'matchup',  // termo de gaming
-  'esports',  // termo de gaming
+  'respawn', // termo de gaming
+  'matchup', // termo de gaming
+  'esports', // termo de gaming
 ]);
 
 // ─── PT-BR Stemmer (RSLP simplificado) ──────────────────────────────────────
